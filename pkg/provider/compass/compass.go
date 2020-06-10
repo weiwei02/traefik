@@ -3,6 +3,7 @@ package compass
 import (
 	"context"
 	"fmt"
+	pb "github.com/containous/traefik/v2/api/compass/virtualHost"
 	"github.com/containous/traefik/v2/pkg/config/dynamic"
 	"github.com/containous/traefik/v2/pkg/log"
 	"github.com/containous/traefik/v2/pkg/safe"
@@ -39,8 +40,8 @@ func (p *Provider) Provide(configurationChan chan<- dynamic.Message, pool *safe.
 		// 失败后尝试重新连接
 	LIS:
 		p.conn.ResetConnectBackoff()
-		client := NewNeoDiscoveryServiceClient(p.conn)
-		stream, err := client.DiscoveryData(context.Background(), &QueryConfig{})
+		client := pb.NewNeoDiscoveryServiceClient(p.conn)
+		stream, err := client.DiscoveryData(context.Background(), &pb.QueryConfig{})
 		if err != nil {
 			log.WithoutContext().WithField(log.ProviderName, providerName).Errorf("create stream error: %s", err)
 			goto LIS
@@ -85,7 +86,7 @@ func (p *Provider) Provide(configurationChan chan<- dynamic.Message, pool *safe.
 // 创建http虚拟主机配置
 // compass返回的数据：
 // 每个虚拟主机下至少有一个路由，默认是 default ，其它路由代表是有特定的前缀
-func transVhostToHTTPConfig(vhost *VirtualHost) *dynamic.HTTPConfiguration {
+func transVhostToHTTPConfig(vhost *pb.VirtualHost) *dynamic.HTTPConfiguration {
 	routePrefix := vhost.VirtualHost + "_"
 	conf := &dynamic.HTTPConfiguration{
 		Routers:     make(map[string]*dynamic.Router),
