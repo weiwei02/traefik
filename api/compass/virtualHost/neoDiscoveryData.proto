@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+
+option java_multiple_files = true;
+option java_package = "com.ly.compass.api.neo.discovery";
+option java_outer_classname = "discoveryConfigProto";
+
+package neoDiscovery;
+option go_package = ".;compass";
+
+
+service NeoDiscoveryService {
+    rpc DiscoveryData (QueryConfig) returns (stream NeoDiscoveryData) {}
+}
+
+message QueryConfig {
+    string serviceName = 1;
+    string ip = 2;
+    int32 port = 3;
+}
+
+message VirtualHost {
+    string virtualHost = 1;
+    string protocol = 2;
+    string timestamp = 3;
+    map<string, string> routes = 4;
+    repeated ServerConfig services = 5;
+    repeated Endpoint endpoints = 6;
+
+}
+
+message NeoDiscoveryData {
+
+    repeated VirtualHost vhosts = 1;
+
+}
+
+
+message ServerConfig {
+
+    string name = 1;
+    Type source = 2;
+    string basePath = 3;
+    string uk = 4;
+    repeated string endpoints = 5;
+
+
+}
+
+enum Type{
+    NAMING = 0;
+    CUSTOM = 1;
+    NEO = 2;
+}
+
+
+message Endpoint {
+
+    string ip = 1;
+    string protocol = 2;
+    string port = 3;
+    repeated string tags = 4;
+    string platform = 5;
+
+}

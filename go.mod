@@ -39,7 +39,7 @@ require (
 	github.com/go-acme/lego/v3 v3.7.0
 	github.com/go-check/check v0.0.0-00010101000000-000000000000
 	github.com/go-kit/kit v0.9.0
-	github.com/golang/protobuf v1.3.4
+	github.com/golang/protobuf v1.4.2
 	github.com/google/go-github/v28 v28.1.1
 	github.com/gorilla/mux v1.7.3
 	github.com/gorilla/websocket v1.4.2
@@ -82,9 +82,11 @@ require (
 	github.com/vulcand/predicate v1.1.0
 	go.elastic.co/apm v1.7.0
 	go.elastic.co/apm/module/apmot v1.7.0
-	golang.org/x/net v0.0.0-20200301022130-244492dfa37a
+	golang.org/x/net v0.0.0-20200602114024-627f9648deb9
+	golang.org/x/sys v0.0.0-20200602225109-6fdc65e7d980 // indirect
 	golang.org/x/time v0.0.0-20191024005414-555d28b269f0
-	google.golang.org/grpc v1.27.1
+	google.golang.org/genproto v0.0.0-20200608115520-7c474a2e3482 // indirect
+	google.golang.org/grpc v1.29.1
 	gopkg.in/DataDog/dd-trace-go.v1 v1.19.0
 	gopkg.in/fsnotify.v1 v1.4.7
 	gopkg.in/jcmturner/goidentity.v3 v3.0.0 // indirect
