@@ -1,12 +1,10 @@
 package compass
 
 import (
-	"context"
 	"fmt"
 	"github.com/containous/traefik/v2/pkg/config/dynamic"
 	"github.com/containous/traefik/v2/pkg/log"
 	"github.com/containous/traefik/v2/pkg/provider/compass/rule"
-	"github.com/containous/traefik/v2/pkg/safe"
 	"github.com/containous/traefik/v2/pkg/types"
 	"strconv"
 	"strings"
@@ -16,25 +14,22 @@ import (
 //@author Wang Weiwei
 //@since 2020/6/12
 
-
-func (p *Provider) CompassRuleWatcher(configurationChan chan<- dynamic.Message, pool *safe.Pool) {
-	pool.GoCtx(func(ctx context.Context) {
-		ticker := time.NewTicker(time.Second * 30)
-		for {
-			select {
-			case _ = <-ticker.C:
-				{
-					p.updateRule()
-					configurationChan <- dynamic.Message{
-						ProviderName:  providerName,
-						Configuration: p.Configuration.DeepCopy(),
-					}
-
+func (p *Provider) CompassRuleWatcher(configurationChan chan<- dynamic.Message) {
+	ticker := time.NewTicker(time.Second * 30)
+	for {
+		select {
+		case _ = <-ticker.C:
+			{
+				p.updateRule()
+				configurationChan <- dynamic.Message{
+					ProviderName:  providerName,
+					Configuration: p.Configuration.DeepCopy(),
 				}
 
 			}
+
 		}
-	})
+	}
 }
 
 func (p *Provider) updateRule() {
@@ -88,6 +83,7 @@ func (p *Provider) updateRule() {
 		}
 	}
 }
+
 // add middleware to router
 func (p *Provider) addMiddlewareToRouter(serviceName string, path string, middlewareName string) {
 

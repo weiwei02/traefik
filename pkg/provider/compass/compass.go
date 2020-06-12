@@ -1,10 +1,10 @@
 package compass
 
 import (
+	"context"
 	"github.com/containous/traefik/v2/pkg/config/dynamic"
 	"github.com/containous/traefik/v2/pkg/safe"
 	"github.com/containous/traefik/v2/pkg/tls"
-	"google.golang.org/grpc"
 )
 
 //@author Wang Weiwei
@@ -15,8 +15,7 @@ type Provider struct {
 	GRPCAddress               string `description:"compass grpc server address" json:"grpcAddress,omitempty" toml:"grpcAddress,omitempty" yaml:"grpcAddress,omitempty" export:"true"`
 	RestAddress               string `description:"compass rest server address" json:"restAddress,omitempty" toml:"restAddress,omitempty" yaml:"restAddress,omitempty" export:"true"`
 	DebugLogGeneratedTemplate bool   `description:"Enable debug logging of generated configuration template." json:"debugLogGeneratedTemplate,omitempty" toml:"debugLogGeneratedTemplate,omitempty" yaml:"debugLogGeneratedTemplate,omitempty" export:"true"`
-	conn                      *grpc.ClientConn
-	Configuration			*dynamic.Configuration
+	Configuration             *dynamic.Configuration
 }
 
 // Init the provider.
@@ -24,11 +23,6 @@ func (p *Provider) Init() error {
 	if p.GRPCAddress == "" {
 
 	}
-	conn, err := grpc.Dial(p.GRPCAddress, grpc.WithInsecure())
-	if err != nil {
-		return err
-	}
-	p.conn = conn
 	p.Configuration = &dynamic.Configuration{
 		HTTP: &dynamic.HTTPConfiguration{
 			Routers:     make(map[string]*dynamic.Router),
@@ -51,13 +45,14 @@ func (p *Provider) Init() error {
 	return nil
 }
 
-
 // 提供虚拟主机发现检查和规则发现检查功能
 func (p *Provider) Provide(configurationChan chan<- dynamic.Message, pool *safe.Pool) error {
-	p.VHostDiscovery(configurationChan, pool)
-	p.CompassRuleWatcher(configurationChan, pool)
+	pool.GoCtx(func(ctx context.Context) {
+		p.VHostDiscovery(configurationChan)
+	})
+	pool.GoCtx(func(ctx context.Context) {
+		p.CompassRuleWatcher(configurationChan)
+	})
+
 	return nil
 }
-
-
-
