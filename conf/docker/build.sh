@@ -1,0 +1,1 @@
+docker build -t hub.17usoft.com/cncf/traefik_proxy -f conf/docker/Dockerfile ./

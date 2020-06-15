@@ -29,6 +29,13 @@ entryPoints:
 #        - foobar
     forwardedHeaders:
       insecure: true
+
+  traefik:
+    address: :8080
+    proxyProtocol:
+      insecure: true
+    forwardedHeaders:
+      insecure: true
 #      trustedIPs:
 #        - foobar
 #        - foobar
@@ -232,38 +239,17 @@ metrics:
     addEntryPointsLabels: true
     addServicesLabels: true
     entryPoint: traefik
-    manualRouting: true
-  datadog:
-    address: foobar
-    pushInterval: 42
-    addEntryPointsLabels: true
-    addServicesLabels: true
-  statsD:
-    address: foobar
-    pushInterval: 42
-    addEntryPointsLabels: true
-    addServicesLabels: true
-    prefix: foobar
-  influxDB:
-    address: foobar
-    protocol: foobar
-    pushInterval: 42
-    database: foobar
-    retentionPolicy: foobar
-    username: foobar
-    password: foobar
-    addEntryPointsLabels: true
-    addServicesLabels: true
+    manualRouting: false
 ping:
-  entryPoint: foobar
-  manualRouting: true
+  entryPoint: traefik
+  manualRouting: false
 log:
   level: INFO
-  filePath: logs
-  format: foobar
+  filePath: "logs/traefik.log"
+  format: common
 accessLog:
-  filePath: logs
-  format: foobar
+  filePath: "logs/access.log"
+  format: common
 #  filters:
 #    statusCodes:
 #      - foobar
@@ -281,52 +267,3 @@ accessLog:
 #        name0: foobar
 #        name1: foobar
   bufferingSize: 1024
-#tracing:
-#  serviceName: foobar
-#  spanNameLimit: 42
-#  jaeger:
-#    samplingServerURL: foobar
-#    samplingType: foobar
-#    samplingParam: 42
-#    localAgentHostPort: foobar
-#    gen128Bit: true
-#    propagation: foobar
-#    traceContextHeaderName: foobar
-#    collector:
-#      endpoint: foobar
-#      user: foobar
-#      password: foobar
-#  zipkin:
-#    httpEndpoint: foobar
-#    sameSpan: true
-#    id128Bit: true
-#    sampleRate: 42
-#  datadog:
-#    localAgentHostPort: foobar
-#    globalTag: foobar
-#    debug: true
-#    prioritySampling: true
-#    traceIDHeaderName: foobar
-#    parentIDHeaderName: foobar
-#    samplingPriorityHeaderName: foobar
-#    bagagePrefixHeaderName: foobar
-#  instana:
-#    localAgentHost: foobar
-#    localAgentPort: 42
-#    logLevel: foobar
-#  haystack:
-#    localAgentHost: foobar
-#    localAgentPort: 42
-#    globalTag: foobar
-#    traceIDHeaderName: foobar
-#    parentIDHeaderName: foobar
-#    spanIDHeaderName: foobar
-#    baggagePrefixHeaderName: foobar
-#  elastic:
-#    serverURL: foobar
-#    secretToken: foobar
-#    serviceEnvironment: foobar
-#hostResolver:
-#  cnameFlattening: true
-#  resolvConfig: foobar
-#  resolvDepth: 42

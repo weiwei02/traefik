@@ -3,6 +3,7 @@ package compass
 import (
 	"context"
 	"github.com/containous/traefik/v2/pkg/config/dynamic"
+	"github.com/containous/traefik/v2/pkg/provider"
 	"github.com/containous/traefik/v2/pkg/safe"
 	"github.com/containous/traefik/v2/pkg/tls"
 )
@@ -10,6 +11,7 @@ import (
 //@author Wang Weiwei
 //@since 2020/6/10
 var providerName = "compass"
+var _ provider.Provider = (*Provider)(nil)
 
 type Provider struct {
 	GRPCAddress               string `description:"compass grpc server address" json:"grpcAddress,omitempty" toml:"grpcAddress,omitempty" yaml:"grpcAddress,omitempty" export:"true"`
