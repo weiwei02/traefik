@@ -20,7 +20,7 @@ type RuleConfigSearcher struct {
 	ServerName string
 	ServerIns  string
 	// address of compass
-	baseUri		string
+	baseUri string
 }
 
 func NewRuleConfigSearcher(serverName, baseUri string) *RuleConfigSearcher {
@@ -29,7 +29,7 @@ func NewRuleConfigSearcher(serverName, baseUri string) *RuleConfigSearcher {
 		ClientIns:  "[\"all\"]",
 		ServerName: serverName,
 		ServerIns:  "[\"all\"]",
-		baseUri: baseUri,
+		baseUri:    baseUri,
 	}
 }
 
@@ -65,11 +65,11 @@ func (searcher *RuleConfigSearcher) FindRule() (map[string]*RuleInvokerType, err
 		return nil, err
 	}
 	for _, server := range result.Server {
-		if server.Instance ==  "all" && server.Server != nil {
+		if server.Instance == "all" && server.Server != nil {
 			for api, _ := range server.Server.ApiConfig {
 				invokerMap[api] = convertConfigToRuleType(server.Server, api)
 			}
-			invokerMap["default"] = convertConfigToRuleType(server.Server, "")
+			invokerMap["all"] = convertConfigToRuleType(server.Server, "")
 		}
 	}
 	return invokerMap, err
@@ -87,9 +87,6 @@ func (searcher *RuleConfigSearcher) findRuleConfig() (*RuleQueryResult, error) {
 	}, nil
 }
 
-
-
-
 // 远程到compass查询服务配置所需参数
 type RemoteRuleQueryParam struct {
 	ServiceName string `json:"serviceName"`
@@ -106,11 +103,11 @@ type RemoteRuleQueryParamServer struct {
 }
 
 // 从远程compass获取服务配置，并将服务配置缓存
-func (searcher *RuleConfigSearcher)findFromRemote(param []*RemoteRuleQueryParam) ([]*ServiceInstanceConfig, error) {
+func (searcher *RuleConfigSearcher) findFromRemote(param []*RemoteRuleQueryParam) ([]*ServiceInstanceConfig, error) {
 	if len(param) == 0 {
 		return nil, errors.New("规则查询参数不足")
 	}
-	url :=  searcher.baseUri + "/ruleConfig/query"
+	url := searcher.baseUri + "/ruleConfig/query"
 	body, err := json.Marshal(param)
 	if err != nil {
 		return nil, err
@@ -124,7 +121,7 @@ func (searcher *RuleConfigSearcher)findFromRemote(param []*RemoteRuleQueryParam)
 		}
 		request.Header.Add("Content-Type", "application/json")
 		request.Header.Add("Last-Modified", "")
-		ctx, _ := context.WithTimeout(context.Background(), time.Second * 5)
+		ctx, _ := context.WithTimeout(context.Background(), time.Second*5)
 		request.WithContext(ctx)
 		resp, err := http.DefaultClient.Do(request)
 		if err != nil {
@@ -139,7 +136,7 @@ func (searcher *RuleConfigSearcher)findFromRemote(param []*RemoteRuleQueryParam)
 		configList := make([]*ServiceInstanceConfig, 0)
 		err = json.Unmarshal(body, &configList)
 		if err != nil {
-			return nil,err
+			return nil, err
 		}
 		return configList, nil
 	}

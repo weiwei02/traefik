@@ -7,12 +7,14 @@ import (
 	"github.com/containous/traefik/v2/pkg/config/dynamic"
 	"github.com/containous/traefik/v2/pkg/log"
 	"google.golang.org/grpc"
+	"strings"
 	"time"
 )
 
 //@author Wang Weiwei
 //@since 2020/6/11
 const defaultPath = "all"
+const defaultSplit = "|"
 
 func (p *Provider) VHostDiscovery(configurationChan chan<- dynamic.Message) {
 	conn, err := grpc.Dial(p.GRPCAddress, grpc.WithInsecure())
@@ -53,21 +55,25 @@ LIS:
 // 每个虚拟主机下至少有一个路由，默认是 default ，其它路由代表是有特定的前缀
 // 如果虚拟主机已有相关路由，则只更新路由下的服务。如果虚拟主机下没有相关路由，则需同时更新服务与中间件
 func transVhostToHTTPConfig(conf *dynamic.HTTPConfiguration, vhost *pb.VirtualHost) {
-	routePrefix := vhost.VirtualHost + "@"
 	for prefix, ser := range vhost.Routes {
+		prefixName := strings.ReplaceAll(vhost.VirtualHost, "/", defaultSplit)
+		vs := strings.Split(vhost.VirtualHost, "/")
+		if prefix != defaultPath {
+			prefixName = strings.ReplaceAll(prefixName+defaultSplit+prefix, "/", defaultSplit)
+		}
 		// add routes
-		if route, ok := conf.Routers[routePrefix+prefix]; ok {
+		if route, ok := conf.Routers[prefixName]; ok {
 			route.Service = ser
 		} else {
-			conf.Routers[routePrefix+prefix] = &dynamic.Router{
+			conf.Routers[prefixName] = &dynamic.Router{
 				EntryPoints: []string{"web"},
 				Middlewares: make([]string, 0),
 				Service:     ser,
 				Rule: func() string {
 					if prefix == defaultPath {
-						return fmt.Sprintf("Host(`%s`)", vhost.VirtualHost)
+						return fmt.Sprintf("Host(`%s`)", vs[0])
 					}
-					return fmt.Sprintf("Host(`%s`) && PathPrefix(`%s`)", vhost.VirtualHost, prefix)
+					return fmt.Sprintf("Host(`%s`) && PathPrefix(`%s`)", vs[0], prefix)
 				}(),
 			}
 		}

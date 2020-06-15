@@ -75,7 +75,7 @@ func (p *Provider) updateRule() {
 				if _, ok := p.Configuration.HTTP.Middlewares[middlewareName]; !ok {
 					p.Configuration.HTTP.Middlewares[middlewareName] =
 						&dynamic.Middleware{CircuitBreaker: &dynamic.CircuitBreaker{
-							Expression: fmt.Sprintf("NetworkErrorRatio() >= %s || ResponseCodeRatio(500, 600, 0, 600) >= %s", ruleType.CircuitBreak.ErrorPercent, ruleType.CircuitBreak.ErrorPercent),
+							Expression: fmt.Sprintf("NetworkErrorRatio() >= %s || ResponseCodeRatio(300, 600, 0, 600) >= %s", ruleType.CircuitBreak.ErrorPercent, ruleType.CircuitBreak.ErrorPercent),
 						}}
 				}
 				p.addMiddlewareToRouter(key, path, middlewareName)
@@ -89,6 +89,18 @@ func (p *Provider) addMiddlewareToRouter(serviceName string, path string, middle
 
 	for routerKey, router := range p.Configuration.HTTP.Routers {
 		if router.Service == serviceName {
+
+			// middleware have not in the middlewares slice
+			ready := false
+			for _, mname := range router.Middlewares {
+				if mname == middlewareName {
+					ready = true
+					break
+				}
+			}
+			if ready {
+				break
+			}
 			if path != defaultPath {
 				if strings.HasSuffix(routerKey, path) {
 					router.Middlewares = append(router.Middlewares, middlewareName)
