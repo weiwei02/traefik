@@ -61,10 +61,10 @@ ping:
   manualRouting: false
 log:
   level: INFO
-  filePath: "/data/logs/oceanxinjian1.egde.proxy.traefik/app/traefik.log"
+  filePath: "/data/logs/skynet-oceanxinjian1.egde.proxy.traefik/app/traefik.log"
   format: common
 accessLog:
-  filePath: "/data/logs/oceanxinjian1.egde.proxy.traefik/app/access.log"
+  filePath: "/data/logs/skynet-oceanxinjian1.egde.proxy.traefik/app/access.log"
   format: common
   filters:
     statusCodes:

@@ -44,17 +44,17 @@ func TestGetDataFromCompass(t *testing.T) {
 	client := pb.NewNeoDiscoveryServiceClient(conn)
 	stream, err := client.DiscoveryData(context.Background(), &pb.QueryConfig{})
 	require.NoError(t, err)
-	for {
-		res, err := stream.Recv()
-		require.NoError(t, err)
-		require.NotNilf(t, res, "compass data can not null")
-		t.Log(res.String())
-		for _, vhost := range res.Vhosts {
-			log.WithoutContext().WithField(log.ProviderName, providerName).Infof("receive compass virtual update data %s", vhost.String())
-			transVhostToHTTPConfig(config.HTTP, vhost)
-			require.Truef(t, len(config.HTTP.Services) > 0, "compass 动态配置服务为空")
-			require.Truef(t, len(config.HTTP.Routers) > 0, "compass 动态配置路由为空")
-			t.Log(config)
-		}
+	//for {
+	res, err := stream.Recv()
+	require.NoError(t, err)
+	require.NotNilf(t, res, "compass data can not null")
+	t.Log(res.String())
+	for _, vhost := range res.Vhosts {
+		log.WithoutContext().WithField(log.ProviderName, providerName).Infof("receive compass virtual update data %s", vhost.String())
+		transVhostToHTTPConfig(config.HTTP, vhost)
+		require.Truef(t, len(config.HTTP.Services) > 0, "compass 动态配置服务为空")
+		require.Truef(t, len(config.HTTP.Routers) > 0, "compass 动态配置路由为空")
+		t.Log(config)
 	}
+	//}
 }
