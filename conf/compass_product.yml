@@ -34,7 +34,7 @@ entryPoints:
 providers:
   providersThrottleDuration: 10
   compass:
-    grpcAddress: "10.98.21.5:9091"
+    grpcAddress: "172.18.2.97:9091"
     restAddress: "http://neo-compass.vip.elong.com"
   rest:
     insecure: true
