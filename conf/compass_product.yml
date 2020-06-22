@@ -3,9 +3,6 @@ global:
   sendAnonymousUsage: false
 serversTransport:
   insecureSkipVerify: true
-#  rootCAs:
-#    - foobar
-#    - foobar
   maxIdleConnsPerHost: 300
   forwardingTimeouts:
     dialTimeout: 5
@@ -37,8 +34,8 @@ entryPoints:
 providers:
   providersThrottleDuration: 10
   compass:
-    grpcAddress: "10.98.21.5:9091:9091"
-    restAddress: "http://neo-compass-qa.elong.com"
+    grpcAddress: "10.98.21.5:9091"
+    restAddress: "http://neo-compass.vip.elong.com"
   rest:
     insecure: true
 api:
